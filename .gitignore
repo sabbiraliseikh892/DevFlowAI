@@ -1,0 +1,34 @@
+# --- Node / npm ---------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Vite / React build output -----------------------------------------------
+frontend/dist/
+frontend/.vite/
+
+# --- .NET / ASP.NET Core ------------------------------------------------------
+backend/bin/
+backend/obj/
+
+# --- Environment & secrets ----------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.user
+*.suo
+*.userosscache
+
+# --- IDEs & editors -----------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Logs ---------------------------------------------------------------------
+*.log
+logs/

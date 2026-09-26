@@ -1,100 +1,122 @@
-# We are building DevFlow AI for the IBM BOB 2.0 Hackathon.
+# DevFlow AI
 
-# 
+> AI-powered developer workflow assistant — IBM Bob 2.0 Hackathon MVP
 
-# Create the initial full-stack project structure for DevFlow AI.
+---
 
-# 
+## What is DevFlow AI?
 
-# Frontend:
+DevFlow AI is a full-stack web application that brings AI-assisted insights directly into your development workflow. It connects to your GitHub repositories, surfaces pull-request summaries, and provides actionable code-review feedback — all in a single dashboard.
 
-# \- React
+This repository contains the **Phase 1 scaffold**: a running frontend and backend with a health-check integration, ready for feature development.
 
-# \- TypeScript
+---
 
-# \- Vite
+## Technology Stack
 
-# 
+| Layer     | Technology                                |
+|-----------|-------------------------------------------|
+| Frontend  | React 19, TypeScript, Vite 6              |
+| Backend   | ASP.NET Core Web API, .NET 8, C#          |
+| AI        | IBM watsonx *(planned — Phase 2)*         |
+| GitHub    | GitHub REST API *(planned — Phase 2)*     |
 
-# Backend:
+---
 
-# \- ASP.NET Core Web API
+## High-Level Architecture
 
-# \- C#
+```
+┌─────────────────────────┐        HTTP / JSON        ┌──────────────────────────┐
+│   Frontend (Vite:5173)  │ ◄───────────────────────► │  Backend API (:5031)     │
+│   React + TypeScript    │                            │  ASP.NET Core Web API    │
+│                         │     GET /api/health        │  Controllers / Services  │
+└─────────────────────────┘                            └──────────────────────────┘
+```
 
-# 
+During development, Vite proxies `/api/*` requests to the backend so both can run
+independently without CORS issues from the browser.
 
-# Create a clean structure with:
+---
 
-# 
+## Project Structure
 
-# /frontend
+```
+DevFlowAI/
+├── frontend/                  # React + TypeScript + Vite
+│   ├── src/
+│   │   ├── App.tsx            # Dashboard shell
+│   │   └── App.css            # Application styles
+│   └── vite.config.ts         # Proxy configuration
+│
+├── backend/                   # ASP.NET Core Web API
+│   ├── Controllers/           # HTTP endpoint handlers
+│   ├── Services/              # Business logic
+│   ├── DTOs/                  # Data transfer objects
+│   ├── Models/                # Domain models (future)
+│   └── Program.cs             # Application entry point
+│
+├── docs/                      # Architecture & design notes
+├── bob_sessions/              # Bob AI session artefacts
+└── README.md
+```
 
-# /backend
+---
 
-# /docs
+## Prerequisites
 
-# /bob\_sessions
+| Tool        | Minimum version | Install                        |
+|-------------|-----------------|--------------------------------|
+| Node.js     | 18+             | https://nodejs.org             |
+| npm         | 9+              | bundled with Node.js           |
+| .NET SDK    | 8.0             | https://dotnet.microsoft.com   |
 
-# 
+---
 
-# The frontend should contain a modern developer-focused dashboard shell.
+## Running Locally
 
-# 
+### 1. Backend
 
-# The backend should contain:
+```bash
+cd backend
+dotnet run
+# API is available at http://localhost:5031
+# Health check: GET http://localhost:5031/api/health
+```
 
-# \- Controllers
+### 2. Frontend
 
-# \- Services
+```bash
+cd frontend
+npm install
+npm run dev
+# Dashboard is available at http://localhost:5173
+```
 
-# \- DTOs
+Open **http://localhost:5173** — the dashboard will call the backend health endpoint
+and display **"DevFlow AI API is running"** when both services are up.
 
-# \- Models
+---
 
-# \- Configuration
+## Current MVP Features
 
-# \- Exception handling
+- ✅ React dashboard shell
+- ✅ ASP.NET Core Web API with structured controller/service/DTO layers
+- ✅ `GET /api/health` endpoint
+- ✅ Frontend → backend connectivity check
+- ✅ Vite dev-server proxy (no CORS friction in development)
 
-# 
+---
 
-# Create an initial health-check API:
+## Planned Features (Phase 2+)
 
-# GET /api/health
+- 🔲 GitHub OAuth & repository browser
+- 🔲 Pull-request listing and diff viewer
+- 🔲 IBM watsonx AI-powered PR summaries
+- 🔲 Automated code-review suggestions
+- 🔲 Developer activity dashboard
 
-# 
+---
 
-# The frontend should call the health-check API and display:
+## License
 
-# "DevFlow AI API Connected"
-
-# 
-
-# Do not implement GitHub integration or AI integration yet.
-
-# Do not add authentication yet.
-
-# 
-
-# Keep the architecture simple and runnable locally.
-
-# 
-
-# Also create a README.md explaining:
-
-# \- What DevFlow AI is
-
-# \- Project architecture
-
-# \- How to run frontend
-
-# \- How to run backend
-
-# \- Current MVP features
-
-# \- Future AI/GitHub integration
-
-# 
-
-# After implementation, verify that both frontend and backend build successfully.
-
+MIT

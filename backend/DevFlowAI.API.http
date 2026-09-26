@@ -1,0 +1,6 @@
+@DevFlowAI.API_HostAddress = http://localhost:5031
+
+GET {{DevFlowAI.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
