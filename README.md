@@ -1,33 +1,29 @@
 # DevFlow AI
 
+AI-powered developer workflow assistant built for the IBM Bob 2.0 Hackathon.
+
 ## Overview
 
-AI-powered developer workflow assistant for analyzing GitHub repositories,
-performing AI code reviews, and identifying actionable software issues.
+DevFlow AI helps developers understand and review GitHub repositories using
+AI-powered repository analysis and code review.
 
-## Problem
-
-Developers spend significant time reviewing unfamiliar codebases,
-identifying quality issues, understanding repositories, and maintaining code.
-
-## Solution
-
-DevFlow AI combines GitHub repository analysis with IBM watsonx.ai
-to provide automated repository insights and AI-powered code review.
+It combines a React frontend, ASP.NET Core backend, GitHub integration, and
+IBM watsonx.ai to identify actionable software issues.
 
 ## Features
 
 - GitHub repository analysis
 - AI-powered code review
-- Security issue detection
+- Security analysis
 - Code quality analysis
-- Performance issue detection
+- Performance analysis
 - Maintainability analysis
 - Reliability and error-handling analysis
-- Finding severity classification
+- Severity-based findings
 - File and line-level findings
-- AI recommendations
+- AI-generated recommendations
 - IBM watsonx.ai integration
+- React-based developer dashboard
 
 ## Technology Stack
 
@@ -40,8 +36,8 @@ to provide automated repository insights and AI-powered code review.
 
 ### Backend
 
-- ASP.NET Core
 - C#
+- ASP.NET Core
 - REST API
 - GitHub REST API
 
@@ -52,39 +48,53 @@ to provide automated repository insights and AI-powered code review.
 
 ## Architecture
 
+```text
 User
-↓
-React Frontend
-↓
-ASP.NET Core API
-↓
-GitHub API
-↓
-Repository Context
-↓
+  |
+  v
+React / TypeScript Frontend
+  |
+  v
+ASP.NET Core Backend
+  |
+  +------> GitHub REST API
+  |             |
+  |             v
+  |       Repository Context
+  |
+  v
 IBM watsonx.ai
-↓
-Structured Code Review
-↓
-React Findings Dashboard
+  |
+  v
+Structured AI Findings
+  |
+  v
+Code Review Dashboard
+Code Review Workflow
+User enters a public GitHub repository URL.
+DevFlow AI validates the repository.
+The backend retrieves repository metadata and source files.
+Relevant repository context is prepared for AI analysis.
+IBM watsonx.ai analyzes the supplied code.
+Findings are returned in structured JSON.
+DevFlow AI displays severity, category, file, line, description,
+and recommendation.
+Project Structure
+DevFlowAI/
+│
+├── backend/
+│   └── ASP.NET Core API
+│
+├── frontend/
+│   └── React + TypeScript + Vite
+│
+├── bob_sessions/
+│   └── Bob IDE task session summaries
+│
+└── README.md
+Configuration
 
-## Code Review Workflow
-
-1. User enters a public GitHub repository.
-2. DevFlow AI validates the repository URL.
-3. Backend retrieves repository metadata and source files.
-4. Relevant files are provided to IBM watsonx.ai.
-5. AI analyzes security, quality, performance,
-   maintainability and reliability.
-6. AI returns structured findings.
-7. DevFlow AI displays severity, file, line,
-   description and recommendation.
-
-## Configuration
-
-IBM watsonx.ai credentials are supplied through environment variables.
-
-Required variables:
+The following environment variables are required by the backend:
 
 IBM_WATSONX_URL
 IBM_WATSONX_API_KEY
@@ -92,42 +102,53 @@ IBM_WATSONX_PROJECT_ID
 IBM_WATSONX_MODEL_ID
 AnalysisProvider
 
-## Run Locally
+Example:
 
-### Backend
+IBM_WATSONX_URL=https://eu-de.ml.cloud.ibm.com
+IBM_WATSONX_PROJECT_ID=<your-project-id>
+IBM_WATSONX_MODEL_ID=mistralai/mistral-small-3-1-24b-instruct-2503
+AnalysisProvider=Watsonx
 
+Do not commit API keys or other secrets to GitHub.
+
+Run Locally
+Backend
 cd backend
 dotnet restore
+dotnet build
 dotnet run
 
 Backend:
+
 http://127.0.0.1:5032
-
-### Frontend
-
+Frontend
 cd frontend
 npm install
+npm run build
 npm run dev
 
 Frontend:
+
 http://localhost:5173
+IBM Bob Usage
 
-## IBM Bob Usage
+IBM Bob was used during development of DevFlow AI for implementation,
+debugging, frontend development, backend development, code review
+functionality, and UI refinement.
 
-IBM Bob was used during development to accelerate the implementation
-and iteration of DevFlow AI, including repository analysis,
-frontend development, backend API implementation, debugging,
-code review functionality and project refinement.
-
-Task session-summary screenshots are available in:
+Bob IDE task session-summary screenshots are included in:
 
 bob_sessions/
-
-## Security
-
-API credentials are not stored in the frontend.
-Sensitive configuration is provided through environment variables.
-
-## Hackathon
+Security
+IBM watsonx.ai credentials are kept on the backend.
+API keys are supplied through environment variables.
+Credentials are not stored in the React frontend.
+The application accepts public GitHub repositories for analysis.
+Hackathon
 
 Built for the IBM Bob 2.0 Hackathon.
+
+License
+
+This project is provided for hackathon/demo purposes.
+```
