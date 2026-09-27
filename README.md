@@ -1,122 +1,133 @@
 # DevFlow AI
 
-> AI-powered developer workflow assistant — IBM Bob 2.0 Hackathon MVP
+## Overview
 
----
+AI-powered developer workflow assistant for analyzing GitHub repositories,
+performing AI code reviews, and identifying actionable software issues.
 
-## What is DevFlow AI?
+## Problem
 
-DevFlow AI is a full-stack web application that brings AI-assisted insights directly into your development workflow. It connects to your GitHub repositories, surfaces pull-request summaries, and provides actionable code-review feedback — all in a single dashboard.
+Developers spend significant time reviewing unfamiliar codebases,
+identifying quality issues, understanding repositories, and maintaining code.
 
-This repository contains the **Phase 1 scaffold**: a running frontend and backend with a health-check integration, ready for feature development.
+## Solution
 
----
+DevFlow AI combines GitHub repository analysis with IBM watsonx.ai
+to provide automated repository insights and AI-powered code review.
+
+## Features
+
+- GitHub repository analysis
+- AI-powered code review
+- Security issue detection
+- Code quality analysis
+- Performance issue detection
+- Maintainability analysis
+- Reliability and error-handling analysis
+- Finding severity classification
+- File and line-level findings
+- AI recommendations
+- IBM watsonx.ai integration
 
 ## Technology Stack
 
-| Layer     | Technology                                |
-|-----------|-------------------------------------------|
-| Frontend  | React 19, TypeScript, Vite 6              |
-| Backend   | ASP.NET Core Web API, .NET 8, C#          |
-| AI        | IBM watsonx *(planned — Phase 2)*         |
-| GitHub    | GitHub REST API *(planned — Phase 2)*     |
+### Frontend
 
----
+- React
+- TypeScript
+- Vite
+- CSS
 
-## High-Level Architecture
+### Backend
 
-```
-┌─────────────────────────┐        HTTP / JSON        ┌──────────────────────────┐
-│   Frontend (Vite:5173)  │ ◄───────────────────────► │  Backend API (:5031)     │
-│   React + TypeScript    │                            │  ASP.NET Core Web API    │
-│                         │     GET /api/health        │  Controllers / Services  │
-└─────────────────────────┘                            └──────────────────────────┘
-```
+- ASP.NET Core
+- C#
+- REST API
+- GitHub REST API
 
-During development, Vite proxies `/api/*` requests to the backend so both can run
-independently without CORS issues from the browser.
+### AI
 
----
+- IBM watsonx.ai
+- Mistral Small 3.1 24B Instruct
 
-## Project Structure
+## Architecture
 
-```
-DevFlowAI/
-├── frontend/                  # React + TypeScript + Vite
-│   ├── src/
-│   │   ├── App.tsx            # Dashboard shell
-│   │   └── App.css            # Application styles
-│   └── vite.config.ts         # Proxy configuration
-│
-├── backend/                   # ASP.NET Core Web API
-│   ├── Controllers/           # HTTP endpoint handlers
-│   ├── Services/              # Business logic
-│   ├── DTOs/                  # Data transfer objects
-│   ├── Models/                # Domain models (future)
-│   └── Program.cs             # Application entry point
-│
-├── docs/                      # Architecture & design notes
-├── bob_sessions/              # Bob AI session artefacts
-└── README.md
-```
+User
+↓
+React Frontend
+↓
+ASP.NET Core API
+↓
+GitHub API
+↓
+Repository Context
+↓
+IBM watsonx.ai
+↓
+Structured Code Review
+↓
+React Findings Dashboard
 
----
+## Code Review Workflow
 
-## Prerequisites
+1. User enters a public GitHub repository.
+2. DevFlow AI validates the repository URL.
+3. Backend retrieves repository metadata and source files.
+4. Relevant files are provided to IBM watsonx.ai.
+5. AI analyzes security, quality, performance,
+   maintainability and reliability.
+6. AI returns structured findings.
+7. DevFlow AI displays severity, file, line,
+   description and recommendation.
 
-| Tool        | Minimum version | Install                        |
-|-------------|-----------------|--------------------------------|
-| Node.js     | 18+             | https://nodejs.org             |
-| npm         | 9+              | bundled with Node.js           |
-| .NET SDK    | 8.0             | https://dotnet.microsoft.com   |
+## Configuration
 
----
+IBM watsonx.ai credentials are supplied through environment variables.
 
-## Running Locally
+Required variables:
 
-### 1. Backend
+IBM_WATSONX_URL
+IBM_WATSONX_API_KEY
+IBM_WATSONX_PROJECT_ID
+IBM_WATSONX_MODEL_ID
+AnalysisProvider
 
-```bash
+## Run Locally
+
+### Backend
+
 cd backend
+dotnet restore
 dotnet run
-# API is available at http://localhost:5031
-# Health check: GET http://localhost:5031/api/health
-```
 
-### 2. Frontend
+Backend:
+http://127.0.0.1:5032
 
-```bash
+### Frontend
+
 cd frontend
 npm install
 npm run dev
-# Dashboard is available at http://localhost:5173
-```
 
-Open **http://localhost:5173** — the dashboard will call the backend health endpoint
-and display **"DevFlow AI API is running"** when both services are up.
+Frontend:
+http://localhost:5173
 
----
+## IBM Bob Usage
 
-## Current MVP Features
+IBM Bob was used during development to accelerate the implementation
+and iteration of DevFlow AI, including repository analysis,
+frontend development, backend API implementation, debugging,
+code review functionality and project refinement.
 
-- ✅ React dashboard shell
-- ✅ ASP.NET Core Web API with structured controller/service/DTO layers
-- ✅ `GET /api/health` endpoint
-- ✅ Frontend → backend connectivity check
-- ✅ Vite dev-server proxy (no CORS friction in development)
+Task session-summary screenshots are available in:
 
----
+bob_sessions/
 
-## Planned Features (Phase 2+)
+## Security
 
-- 🔲 GitHub OAuth & repository browser
-- 🔲 Pull-request listing and diff viewer
-- 🔲 IBM watsonx AI-powered PR summaries
-- 🔲 Automated code-review suggestions
-- 🔲 Developer activity dashboard
+API credentials are not stored in the frontend.
+Sensitive configuration is provided through environment variables.
 
----
+## Hackathon
 
-## License
-
-MIT
+Built for the IBM Bob 2.0 Hackathon.

@@ -1,64 +1,151 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
-interface HealthStatus {
-  status: string
-  message: string
-  timestamp: string
-}
+import { Header } from "./components/Header";
+import { SummaryCard } from "./components/SummaryCard";
+import { RepositoryAnalysis } from "./components/RepositoryAnalysis";
+import { AIRecommendations } from "./components/AIRecommendations";
+import { RecentAnalysis } from "./components/RecentAnalysis";
+import { AnalysisResultPanel } from "./components/AnalysisResultPanel";
+import { CodeReview } from "./components/CodeReview";
+import { Settings } from "./components/Settings";
+
+import {
+  summaryMetrics,
+  recommendations,
+  recentAnalyses,
+} from "./data/mockData";
+
+import {
+  analyzeRepository,
+  AnalysisNetworkError,
+} from "./services/analysisService";
+
+import type {
+  AnalysisFormState,
+  AnalysisStatus,
+  AnalysisResult,
+} from "./types";
+
+type NavItem = "dashboard" | "repository-analysis" | "code-review" | "settings";
 
 function App() {
-  const [health, setHealth] = useState<HealthStatus | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [activeNav, setActiveNav] = useState<NavItem>("dashboard");
 
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json() as Promise<HealthStatus>
-      })
-      .then((data) => {
-        setHealth(data)
-        setLoading(false)
-      })
-      .catch((err: Error) => {
-        setError(err.message)
-        setLoading(false)
-      })
-  }, [])
+  const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus>("idle");
+
+  const [analysisError, setAnalysisError] = useState<string | undefined>(
+    undefined,
+  );
+
+  const [analysisResult, setAnalysisResult] = useState<
+    AnalysisResult | undefined
+  >(undefined);
+
+  async function handleAnalyze(form: AnalysisFormState) {
+    setAnalysisStatus("loading");
+    setAnalysisError(undefined);
+    setAnalysisResult(undefined);
+
+    try {
+      const result = await analyzeRepository({
+        repositoryUrl: form.repoUrl,
+        branch: form.branch,
+      });
+
+      setAnalysisResult(result);
+      setAnalysisStatus("success");
+    } catch (err) {
+      let message: string;
+
+      if (err instanceof AnalysisNetworkError) {
+        message = err.message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      } else {
+        message = "An unexpected error occurred.";
+      }
+
+      setAnalysisError(message);
+      setAnalysisStatus("error");
+    }
+  }
 
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <h1>DevFlow AI</h1>
-        <p className="subtitle">AI-powered developer workflow assistant</p>
-      </header>
+    <div className="app">
+      {/* Header / Navigation */}
+      <Header activeNav={activeNav} onNavChange={setActiveNav} />
 
-      <main className="dashboard-main">
-        <section className="card">
-          <h2>API Status</h2>
-          {loading && <p className="status loading">Connecting…</p>}
-          {error && <p className="status error">⚠ Connection failed: {error}</p>}
-          {health && (
-            <p className="status ok">
-              ✓ {health.message}
-            </p>
-          )}
-        </section>
+      <main className="app-main">
+        {/* =====================================================
+            CODE REVIEW
+           ===================================================== */}
+        {activeNav === "code-review" ? (
+          <CodeReview />
+        ) : activeNav === "settings" ? (
+          /* ===================================================
+             SETTINGS
+             =================================================== */
+          <Settings />
+        ) : (
+          /* ===================================================
+             DASHBOARD / REPOSITORY ANALYSIS
+             =================================================== */
+          <>
+            {/* Repository Analysis */}
+            <RepositoryAnalysis
+              onAnalyze={handleAnalyze}
+              status={analysisStatus}
+              errorMessage={analysisError}
+            />
 
-        <section className="card placeholder">
-          <h2>GitHub Integration</h2>
-          <p>Coming soon — connect your repositories and pull requests.</p>
-        </section>
+            {/* Live Analysis Results */}
+            {analysisStatus === "success" && analysisResult && (
+              <section className="section" aria-labelledby="ar-results-title">
+                <h2 id="ar-results-title" className="section__title">
+                  Analysis Results
+                </h2>
 
-        <section className="card placeholder">
-          <h2>AI Insights</h2>
-          <p>Coming soon — automated code review and PR summaries.</p>
-        </section>
+                <AnalysisResultPanel
+                  result={analysisResult}
+                  onReanalyze={() =>
+                    handleAnalyze({
+                      repoUrl: analysisResult.repository.url,
+                      branch: analysisResult.repository.branch,
+                    })
+                  }
+                />
+              </section>
+            )}
+
+            {/* Overview / Summary Cards */}
+            <section className="section" aria-labelledby="summary-title">
+              <h2 id="summary-title" className="section__title">
+                Overview
+              </h2>
+
+              <div className="summary-grid">
+                {summaryMetrics.map((metric) => (
+                  <SummaryCard key={metric.id} metric={metric} />
+                ))}
+              </div>
+            </section>
+
+            {/* AI Recommendations */}
+            <AIRecommendations recommendations={recommendations} />
+
+            {/* Recent Analysis */}
+            <RecentAnalysis records={recentAnalyses} />
+          </>
+        )}
       </main>
+
+      {/* Footer */}
+      <footer className="app-footer">
+        <span>DevFlow AI &copy; {new Date().getFullYear()}</span>
+      </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
